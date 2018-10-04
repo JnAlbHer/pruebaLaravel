@@ -5,7 +5,12 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Mis tareas</div>
+                <div class="card-header">
+                    Mis tareas
+                    <a class="btn btn-sm btn-primary float-right" href="{{url("/tasks/create") }}">
+                    Agregar Tarea
+                    </a>
+                </div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -14,9 +19,11 @@
                         </div>
                     @endif
 
-                    {{ $user->name }} tiene 
-                    {{ $tasks->count() }} Tareas
-
+                    @if ($tasks->count())
+                    <h5>
+                        {{ $user->name }} tiene 
+                        {{ $tasks->count() }} Tareas
+                    </h5>
                     <table class="table">
                         <thead>
                             <tr>
@@ -31,14 +38,21 @@
                             <tr>
                                 <td>{{ $task->title}}</td>
                                 <td>{{ $task->time}}</td>
-                                <td>{{ $task->status ? 'Terminada':'Pendiente'}}</td>
+                                <td>
+                                    {{ $task->status ? 'Terminada':'Pendiente'}}
+                                    
+                                </td>
                                 <td>
                                     <a class="btn btn-primary" href="{{url("/tasks/$task->id") }}">
                                         Ver
                                     </a>
-                                    <a class="btn btn-warning" href="{{url("/tasks/$task->id/edit") }}">
-                                        Editar
-                                    </a>
+                                    <form method="POST" action="{{ url("/tasks/$task->id") }}">
+                                        @csrf
+                                        <input type="hidden" name="_method" value="PUT">
+                                        <button class="btn btn-warning">
+                                            Cambiar estado
+                                        </button>
+                                    </form>
                                     <form method="POST" action="{{ url("/tasks/$task->id") }}">
                                         @csrf
                                         <input type="hidden" name="_method" value="DELETE">
@@ -51,6 +65,9 @@
                             @endforeach
                         </tbody>
                     </table>
+                    @else
+                    {{ $user->name }} no tiene tareas
+                    @endif
                 </div>
             </div>
         </div>
